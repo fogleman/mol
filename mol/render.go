@@ -1,10 +1,6 @@
 package mol
 
-import (
-	"math"
-
-	"github.com/fogleman/ln/ln"
-)
+import "github.com/fogleman/ln/ln"
 
 func Render(path string, molecule *Molecule) {
 	scene := ln.Scene{}
@@ -16,33 +12,25 @@ func Render(path string, molecule *Molecule) {
 
 	eye := CameraPosition(nodes)
 	center := CameraCenter(nodes)
+	fov := CameraFOV(nodes, eye, center)
 	up := ln.Vector{0, 0, 1}
 
 	for i, node := range nodes {
 		atom := molecule.Atoms[i]
 		radius := float64(AtomicRadii[atom.Symbol]) / 100
-		scene.Add(ln.NewOutlineSphere(eye, up, node, radius*2/3))
+		scene.Add(ln.NewOutlineSphere(eye, up, node, radius*0.5))
 	}
 
 	for _, bond := range molecule.Bonds {
 		v0 := nodes[bond.I]
 		v1 := nodes[bond.J]
-		d := v1.Sub(v0)
-		z := d.Length()
-		u := d.Cross(up).Normalize()
-		a := math.Acos(d.Normalize().Dot(up))
-		m := ln.Translate(v0)
-		if a != 0 {
-			m = ln.Rotate(u, a).Translate(v0)
-		}
-		r := float64(bond.Type) / 20
-		c := ln.NewOutlineCylinder(m.Inverse().MulPosition(eye), up, r, 0, z)
-		scene.Add(ln.NewTransformedShape(c, m))
+		r := float64(bond.Type) / 16
+		scene.Add(ln.NewTransformedOutlineCylinder(eye, up, v0, v1, r))
 	}
 
 	width := 1024.0
 	height := 1024.0
-	paths := scene.Render(eye, center, up, width, height, 60, 0.1, 100, 0.01)
+	paths := scene.Render(eye, center, up, width, height, fov, 0.1, 100, 0.01)
 	paths.WriteToPNG(path, width, height)
 }
 
