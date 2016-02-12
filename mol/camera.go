@@ -6,11 +6,6 @@ import (
 	"github.com/fogleman/ln/ln"
 )
 
-func CameraCenter(points []ln.Vector) ln.Vector {
-	box := ln.BoxForVectors(points)
-	return box.Center()
-}
-
 func CameraFOV(points []ln.Vector, eye, center ln.Vector) float64 {
 	var result float64
 	c := center.Sub(eye).Normalize()

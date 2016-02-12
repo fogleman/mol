@@ -10,8 +10,13 @@ func Render(path string, molecule *Molecule) {
 		nodes[i] = ln.Vector{atom.X, atom.Y, atom.Z}
 	}
 
+	mid := ln.BoxForVectors(nodes).Center()
+	for i, node := range nodes {
+		nodes[i] = node.Sub(mid)
+	}
+
 	eye := CameraPosition(nodes)
-	center := CameraCenter(nodes)
+	center := ln.Vector{}
 	fov := CameraFOV(nodes, eye, center)
 	up := ln.Vector{0, 0, 1}
 
