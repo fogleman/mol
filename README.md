@@ -39,4 +39,4 @@ The program automatically positions the camera to maximize visibility of all ato
 
 ![Example](http://i.imgur.com/hrptdsp.png)
 
-The two molecules shown above are the same (testosterone). One is shown from the most optimal point of view while the other is shown from the least optimal point of view.
+The two molecules shown above are the same (testosterone). One is shown from the most optimal point of view while the other is shown from the least optimal point of view. See [camera.go](https://github.com/fogleman/mol/blob/master/mol/camera.go) to see how this works. It's pretty straightforward.
