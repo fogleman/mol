@@ -18,3 +18,13 @@ The program parses MDL Molfiles or SDF files and generates PNGs.
 The program automatically positions the camera to maximize visibility of all atoms in the molecule.
 
 There are no other command line options as of yet, though one can imagine several possibilities. Output resolution, camera position, animations, etc. Quality pull requests are welcome.
+
+## Input Files
+
+You can search for molecules here:
+
+https://www.ncbi.nlm.nih.gov/pccompound/?term=benzene
+
+Select a result and click `Download > 3D Conformer > SDF`.
+
+There are also several examples in the `examples` folder.
