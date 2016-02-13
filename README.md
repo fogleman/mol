@@ -15,7 +15,7 @@ The program parses MDL Molfiles or SDF files and generates PNGs.
     mol input.sdf
     mol examples/*
 
-There are no other command line options as of yet, though one can imagine several possibilities. Output resolution, camera position, animations, etc. Quality pull requests are welcome.
+There are no other command line options as of yet, though one can imagine several possibilities. Output resolution, output format (SVG), camera position, animations, etc. Quality pull requests are welcome. Also, I know very little about chemistry, so if something doesn't look right, let me know!
 
 ## Input Files
 
