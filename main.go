@@ -18,7 +18,7 @@ func main() {
 		if err != nil {
 			panic(err)
 		}
-		molecule.Render(outputFilename(arg))
+		molecule.Render(outputFilename(arg), 1024, 1024)
 	}
 }
 
