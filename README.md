@@ -32,3 +32,5 @@ There are also several examples in the `examples` folder.
 ## How it Works
 
 `mol` uses another library I created called `ln`. `ln` is a 3D vector renderer that works somewhat like a ray tracer. `mol` simply constructs spheres and cylinders in the right places and uses `ln` to render.
+
+https://github.com/fogleman/ln
