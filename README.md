@@ -4,8 +4,6 @@
 
 ## Installation
 
-You need `cairo` and `pkg-config` installed first.
-
     go get github.com/fogleman/mol
 
 ## Usage
