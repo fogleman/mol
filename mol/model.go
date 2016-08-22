@@ -17,38 +17,66 @@ type Molecule struct {
 	Bonds []Bond
 }
 
+type Sphere struct {
+	Center Vector
+	Radius float64
+	Symbol string
+}
+
+type Cylinder struct {
+	A, B   Vector
+	Radius float64
+	Type   int
+}
+
+func (m *Molecule) Solids() ([]Sphere, []Cylinder) {
+	spheres := make([]Sphere, len(m.Atoms))
+	cylinders := make([]Cylinder, len(m.Bonds))
+
+	for i, atom := range m.Atoms {
+		center := Vector{atom.X, atom.Y, atom.Z}
+		radius := float64(AtomicRadii[atom.Symbol]) / 100
+		spheres[i] = Sphere{center, radius, atom.Symbol}
+	}
+
+	for i, bond := range m.Bonds {
+		s0 := spheres[bond.I]
+		s1 := spheres[bond.J]
+		radius := float64(bond.Type) / 16
+		cylinders[i] = Cylinder{s0.Center, s1.Center, radius, bond.Type}
+	}
+
+	return spheres, cylinders
+}
+
+func (m *Molecule) Camera() Camera {
+	points := make([]Vector, len(m.Atoms))
+	for i, atom := range m.Atoms {
+		points[i] = Vector{atom.X, atom.Y, atom.Z}
+	}
+	return MakeCamera(points)
+}
+
 func (m *Molecule) Paths(width, height float64) ln.Paths {
 	scene := ln.Scene{}
 
-	nodes := make([]ln.Vector, len(m.Atoms))
-	for i, atom := range m.Atoms {
-		nodes[i] = ln.Vector{atom.X, atom.Y, atom.Z}
+	camera := m.Camera()
+	eye := camera.Eye.ln()
+	center := camera.Center.ln()
+	up := camera.Up.ln()
+	fovy := camera.Fovy
+
+	spheres, cylinders := m.Solids()
+
+	for _, s := range spheres {
+		scene.Add(ln.NewOutlineSphere(eye, up, s.Center.ln(), s.Radius*0.5))
 	}
 
-	mid := ln.BoxForVectors(nodes).Center()
-	for i, node := range nodes {
-		nodes[i] = node.Sub(mid)
+	for _, c := range cylinders {
+		scene.Add(ln.NewTransformedOutlineCylinder(eye, up, c.A.ln(), c.B.ln(), c.Radius))
 	}
 
-	eye := CameraPosition(nodes)
-	center := ln.Vector{}
-	fov := CameraFOV(nodes, eye, center)
-	up := ln.Vector{0, 0, 1}
-
-	for i, node := range nodes {
-		atom := m.Atoms[i]
-		radius := float64(AtomicRadii[atom.Symbol]) / 100
-		scene.Add(ln.NewOutlineSphere(eye, up, node, radius*0.5))
-	}
-
-	for _, bond := range m.Bonds {
-		v0 := nodes[bond.I]
-		v1 := nodes[bond.J]
-		r := float64(bond.Type) / 16
-		scene.Add(ln.NewTransformedOutlineCylinder(eye, up, v0, v1, r))
-	}
-
-	return scene.Render(eye, center, up, width, height, fov, 0.1, 100, 0.01)
+	return scene.Render(eye, center, up, width, height, fovy, 0.1, 100, 0.01)
 }
 
 func (m *Molecule) Render(path string, width, height float64) {
